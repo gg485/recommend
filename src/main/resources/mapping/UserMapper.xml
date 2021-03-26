@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="recommend.demo.dao.mapper.UserMapper">
+
+    <select id="getSimpleUser" resultType="User">
+        select * from user where uid=#{uid}
+    </select>
+    <insert id="saveScore">
+        insert into alstab(userid, movieid, rating) values (#{uid},#{movieId},#{rating})
+        on duplicate key update rating=values(rating)
+    </insert>
+    <insert id="saveStar">
+        insert into star(userid, movieid) values (#{uid},#{movieId})
+    </insert>
+    <select id="getScore" resultType="java.lang.Double" parameterType="int">
+        select avg(rating) from (select rating from alstab where movieid=#{movieId}) t
+    </select>
+
+
+</mapper>
