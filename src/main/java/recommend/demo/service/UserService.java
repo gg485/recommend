@@ -24,9 +24,10 @@ public class UserService {
     public void saveStar(int uid,int movieId){
         userMapper.saveStar(uid,movieId);
         Movie movie = movieMapper.getMovieById(movieId);
-        ProducerRecord<String, Event> record = new ProducerRecord<>("recommend", new Event(uid,movie,0,0,1));
+        ProducerRecord<String, Event> record = new ProducerRecord<>("recommend", new Event(uid,movie, Event.EventType.Star));
         kafkaProducer.send(record);
     }
+
     public double getScore(int movieId){
         /*List<Double> list = userMapper.getScore(movieId);
         System.out.println(list);
@@ -35,4 +36,10 @@ public class UserService {
         System.out.println(userMapper.getScore(movieId));
         return userMapper.getScore(movieId);
     }
+
+    public void setNotInterest(int uid,int movieId){
+
+    }
+
+
 }

@@ -1,23 +1,21 @@
 package recommend.demo.model;
 
 import java.io.Serializable;
+import java.util.EnumMap;
+import java.util.EnumSet;
 
 public class Event implements Serializable {
     int uid;
     Movie movie;
-    int see;
-    int click;
-    int star;
+    EventType type;
 
     public Event() {
     }
 
-    public Event(int uid, Movie movie, int see, int click, int star) {
+    public Event(int uid, Movie movie, EventType type) {
         this.uid = uid;
         this.movie = movie;
-        this.see = see;
-        this.click = click;
-        this.star = star;
+        this.type = type;
     }
 
     public int getUid() {
@@ -36,27 +34,15 @@ public class Event implements Serializable {
         this.movie = movie;
     }
 
-    public int getSee() {
-        return see;
+    public EventType getType() {
+        return type;
     }
 
-    public void setSee(int see) {
-        this.see = see;
+    public void setType(EventType type) {
+        this.type = type;
     }
 
-    public int getClick() {
-        return click;
-    }
-
-    public void setClick(int click) {
-        this.click = click;
-    }
-
-    public int getStar() {
-        return star;
-    }
-
-    public void setStar(int star) {
-        this.star = star;
+    public enum EventType{
+        See,Click,Star,NotInterest;
     }
 }

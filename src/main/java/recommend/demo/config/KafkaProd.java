@@ -16,10 +16,10 @@ public class KafkaProd {
     public KafkaProducer<String, Event>kafkaProducer(){//key:电影id，value:点击(1)or曝光(0)
         Properties properties=new Properties();
         properties.setProperty("bootstrap.servers","localhost:9092");
-        return new KafkaProducer<>(properties,new StringSerializer(),new MySerializer<>());
+        return new KafkaProducer<>(properties,new StringSerializer(),new MyEventSerializer<>());
     }
 }
-class MySerializer<T> implements Serializer<T> {
+class MyEventSerializer<T> implements Serializer<T> {
     ObjectMapper mapper=new ObjectMapper();
 
     @Override

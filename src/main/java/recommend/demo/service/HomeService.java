@@ -28,7 +28,7 @@ public class HomeService {
             ret = movieDao.getRecommendMovies(uid, n);
         }
         for (Movie movie : ret) {
-            ProducerRecord<String, Event> record = new ProducerRecord<>("recommend", new Event(uid,movie,1,0,0));
+            ProducerRecord<String, Event> record = new ProducerRecord<>("recommend", new Event(uid,movie, Event.EventType.See));
             kafkaProducer.send(record);
         }
         return ret;

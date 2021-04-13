@@ -13,5 +13,10 @@ public class DemoApplication {
     public static void main(String[] args) {
         System.setProperty("spark.driver.allowMultipleContexts", "true");
         SpringApplication.run(DemoApplication.class, args);
+        RealtimeService realtimeService = BeanUtils.getBean("realtimeService");
+        if(realtimeService == null){
+            throw new NullPointerException("realtimeService is null");
+        }
+        new Thread(realtimeService.getStreamWorker()).start();
     }
 }

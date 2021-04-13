@@ -62,7 +62,7 @@ public class SearchService {
             int movieId = Integer.parseInt(hit.getId());
             Movie movie = new Movie(movieId, movieName, movieTypes);
             list.add(movie);
-            ProducerRecord<String, Event> record = new ProducerRecord<>("recommend", new Event(uid,movie,1,0, 0));
+            ProducerRecord<String, Event> record = new ProducerRecord<>("recommend", new Event(uid,movie, Event.EventType.See));
             kafkaProducer.send(record);
         }
         return list;
@@ -70,7 +70,7 @@ public class SearchService {
 
     public void recordClick(int uid,int id) {
         Movie movie = movieMapper.getMovieById(id);
-        ProducerRecord<String, Event> record = new ProducerRecord<>("recommend", new Event(uid,movie,0,1,0));
+        ProducerRecord<String, Event> record = new ProducerRecord<>("recommend", new Event(uid,movie, Event.EventType.Click));
         kafkaProducer.send(record);
     }
 
