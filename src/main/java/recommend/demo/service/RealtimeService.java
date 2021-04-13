@@ -107,6 +107,7 @@ public class RealtimeService implements Serializable {
                                         jedis.hset(key,movieType,String.valueOf((double)(click+2*star)/see));
                                     }
                                 }
+                                filter.add(new Key(String.valueOf(uid).getBytes()));
                             });
                         }
                     }
