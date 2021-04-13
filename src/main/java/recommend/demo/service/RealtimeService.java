@@ -1,16 +1,12 @@
 package recommend.demo.service;
 
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.api.java.functions.KeySelector;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
+import org.apache.flink.streaming.api.watermark.Watermark;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
@@ -18,7 +14,6 @@ import org.apache.flink.util.Collector;
 import org.apache.hadoop.util.bloom.BloomFilter;
 import org.apache.hadoop.util.bloom.Key;
 import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,7 +65,20 @@ public class RealtimeService implements Serializable {
                 public TypeInformation<Event> getProducedType() {
                     return TypeInformation.of(Event.class);
                 }
-            }, kafkaParams));
+            }, kafkaParams).assignTimestampsAndWatermarks(new AssignerWithPeriodicWatermarks<Event>() {
+                long ts;
+                final long BOUND=100L;
+                @Override
+                public Watermark getCurrentWatermark() {
+                    return new Watermark(ts-BOUND); //tolerate 100ms delay
+                }
+
+                @Override
+                public long extractTimestamp(Event element, long previousElementTimestamp) {
+                    ts=previousElementTimestamp;
+                    return ts;
+                }
+            }));
             ds.keyBy(Event::getUid).timeWindow(Time.seconds(600))
                     .process(new ProcessWindowFunction<Event, Void, Integer, TimeWindow>() {
                         @Override

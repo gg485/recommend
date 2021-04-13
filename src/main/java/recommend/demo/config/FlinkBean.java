@@ -10,7 +10,7 @@ public class FlinkBean {
     @Bean
     public StreamExecutionEnvironment streamExecutionEnvironment(){
         StreamExecutionEnvironment env=StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
+        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
         env.setParallelism(1);
         env.getConfig().setAutoWatermarkInterval(1000L);
         return env;
